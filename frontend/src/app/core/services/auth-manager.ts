@@ -3,10 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { IUser } from '../models';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthManager {
-  private readonly apiUrl = 'http://localhost:3000/api/auth';
+  private readonly apiUrl =  environment.baseUrl + '/api/auth';
 
   private currentUser = signal<IUser | null>(null);
   private token = signal<string | null>(null);

@@ -2,10 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { IProject, ITask, IUser } from '../models';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ProjectApi {
-  private readonly apiUrl = 'http://localhost:3000/api';
+  private readonly apiUrl = environment.baseUrl +  '/api';
 
   constructor(private http: HttpClient) {}
 
