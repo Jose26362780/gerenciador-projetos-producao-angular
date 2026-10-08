@@ -133,4 +133,34 @@ describe('Login Component', () => {
     expect(buttonEl.disabled).toBe(true);
     expect(buttonEl.textContent).toContain('Autenticando');
   });
+
+  it('deve preencher o e-mail ao clicar nos cards de acesso rápido', () => {
+    const buttons: HTMLButtonElement[] = Array.from(
+      fixture.nativeElement.querySelectorAll('button[type="button"]'),
+    );
+    expect(buttons.length).toBeGreaterThanOrEqual(2);
+
+    buttons[0].click();
+    fixture.detectChanges();
+    expect(component.email).toBe('felipe@example.com');
+
+    buttons[1].click();
+    fixture.detectChanges();
+    expect(component.email).toBe('ana@example.com');
+  });
+
+  it('deve exibir a seta quando não estiver carregando e desabilitar o botão sem e-mail', () => {
+    component.isLoading = false;
+    component.email = '';
+    fixture.detectChanges();
+
+    const html: HTMLElement = fixture.nativeElement;
+    expect(html.innerHTML).toContain('→');
+
+    const buttonEl: HTMLButtonElement = html.querySelector(
+      '[data-testid="submit-button"]',
+    ) as HTMLButtonElement;
+    expect(buttonEl.disabled).toBe(true);
+    expect(buttonEl.textContent).toContain('Acessar Plataforma');
+  });
 });

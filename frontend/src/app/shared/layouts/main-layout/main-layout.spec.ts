@@ -1,38 +1,40 @@
-import { Component } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { MainLayout } from './main-layout';
 import { provideRouter, RouterOutlet } from '@angular/router';
-import { Sidebar } from '../../components/sidebar/sidebar';
 import { By } from '@angular/platform-browser';
-
-@Component({
-  selector: 'app-sidebar',
-  standalone: true,
-  template: `<div data-testid="mock-sidebar">Sou o mock do sidebar</div>`,
-})
-class MockSidebar {}
+import { signal } from '@angular/core';
+import { AuthManager } from '../../../core/services/auth-manager';
 
 describe('Main Layout Component', () => {
   let fixture: ComponentFixture<MainLayout>;
+  const authManagerMock = {
+    user: signal({ id: '1', name: 'Felipe Admin', email: 'f@f.com', role: 'admin' }),
+    isAdmin: signal(true),
+    logout: vi.fn(),
+  };
 
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [MainLayout],
-      providers: [provideRouter([])],
-    }).overrideComponent(MainLayout, {
-      remove: { imports: [Sidebar] },
-      add: { imports: [MockSidebar] },
+      providers: [provideRouter([]), { provide: AuthManager, useValue: authManagerMock }],
     });
 
     fixture = TestBed.createComponent(MainLayout);
     fixture.detectChanges();
   });
 
-  it('deve renderizar o layout com a sidebar (falsa) e os espaços de roteamento', () => {
-    const sidebarFalsa = fixture.debugElement.query(By.css('[data-testid="mock-sidebar"]'));
-    expect(sidebarFalsa).toBeTruthy();
+  it('deve criar o layout', () => {
+    expect(fixture.componentInstance).toBeTruthy();
+  });
+
+  it('deve renderizar o layout com a sidebar real e os espaços de roteamento', () => {
+    const sidebar = fixture.debugElement.query(By.css('app-sidebar'));
+    expect(sidebar).toBeTruthy();
 
     const outlets = fixture.debugElement.queryAll(By.directive(RouterOutlet));
     expect(outlets.length).toBe(2);
+
+    const html: HTMLElement = fixture.nativeElement;
+    expect(html.innerHTML).toContain('app-sidebar');
   });
 });
