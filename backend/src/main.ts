@@ -9,7 +9,18 @@ import { authMiddleware } from './middleware/auth.middleware';
 
 const app = express();
 
-app.use(cors());
+if(process.env.NODE_ENV == 'production') {
+ app.use(cors({
+   origin: process.env.FRONTEND_URL
+ }))
+} else {
+ app.use(
+   cors({
+     origin: "https://localhost:4200",
+   }),
+ );
+}
+
 app.use(express.json());
 
 // Simula latência de rede (300ms)
@@ -29,5 +40,7 @@ app.get('/api/members', authMiddleware, (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
+
   console.log(`Backend rodando na porta ${PORT}`);
+  console.log("esta em produção: ", process.env.NODE_ENV)
 });
